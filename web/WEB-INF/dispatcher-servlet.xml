@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/>
+    
+    <context:component-scan base-package="Controller"></context:component-scan>
+    <mvc:annotation-driven />
+
+    <!--
+    Most controllers will use the ControllerClassNameHandlerMapping above, but
+    for the index controller we are using ParameterizableViewController, so we must
+    define an explicit mapping for it.
+    -->
+    <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="mappings">
+            <props>
+                <prop key="index.htm">indexController</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="viewResolver"
+          class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:prefix="/WEB-INF/jsp/"
+          
+          p:suffix=".jsp" />
+
+    <!--
+    The index controller.
+    -->
+    <bean name="indexController"
+          class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+          p:viewName="index" />
+    <bean id="dataSource"  
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+        <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />  
+        <property name="url" value="jdbc:sqlserver://192.168.200.128;databaseName=account_tong" />  
+        <property name="username" value="sa" />  
+        <property name="password" value="account_tong" />   
+   </bean>
+   <bean id="dataSourceMysql"  
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">  
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />  
+        <property name="url" value="jdbc:mysql://localhost:3306/webjxonline?characterEncoding=UTF-8" />  
+        <property name="username" value="root" />  
+        <property name="password" value=""/>   
+   </bean>
+       
+ 
+       
+    <bean id="userDao" class="DAO.UserDAOImpl" />  
+    <bean id="emailActiveDao" class="DAO.EmailActiveDAOImpl" />  
+    <bean id ="postsDao" class = "DAO.PostsDAOImpl" />
+    <bean id="userService" class="Services.UserServiceImpl" /> 
+    <bean id="emailActiveService" class="Services.EmailActiveServiceImpl"/>  
+    <bean id="postsService" class = "Services.PostsServiceImpl"/>
+    
+    <bean id="messageSource"
+    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename" value="/WEB-INF/messages" />
+    </bean>
+    
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	<property name="host" value="smtp.gmail.com" />
+	<property name="port" value="465" />
+        
+	<property name="username" value="admin@volamkyhiep.com" />
+	<property name="password" value="mikonmiken150295" />
+        
+      
+	<property name="javaMailProperties">
+	   <props>
+             <prop key="mail.smtp.auth">true</prop>
+           
+             <prop key="mail.smtp.quitwait">false</prop>
+            <prop key="mail.smtp.starttls.enable">true</prop>
+            <prop key="mail.smtp.ssl.enable">true</prop>
+            <prop key="mail.smtp.ssl.trust">*</prop>
+            <prop key = "mail.debug">true</prop>
+            
+          
+         
+
+       	   </props>
+	</property>
+    </bean>
+    
+    <mvc:resources mapping="/resource/**" location="/resource/" />
+ 
+    <bean id="webConfig" class="Config.WebConfig">
+	<property name="host" value="http://volamkyhiep.com" />
+        <property name="emailSupport" value="hotro.volamhuyetsu@gmail.com" />
+        <property name="folderXepHang" value="C:\XepHang" />
+    </bean>
+    
+    
+</beans>
